@@ -4,15 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="df8046ae-e5fc-4b10-950c-c31aca033f77" name="Changes" comment="Initial Upload">
-      <change beforePath="$PROJECT_DIR$/batter_similarity.py" beforeDir="false" afterPath="$PROJECT_DIR$/similarities/batter_similarity.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create_leash_model_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/create_leash_model_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create_season_play_file.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/create_season_play_file.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/driver.py" beforeDir="false" afterPath="$PROJECT_DIR$/driver.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/simulation/game.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/leash_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/leash_model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pitcher_similarity.py" beforeDir="false" afterPath="$PROJECT_DIR$/similarities/pitcher_similarity.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simulate_day.py" beforeDir="false" afterPath="$PROJECT_DIR$/simulation/simulate_day.py" afterDir="false" />
+    <list default="true" id="df8046ae-e5fc-4b10-950c-c31aca033f77" name="Changes" comment="Updated File Structure">
+      <change beforePath="$PROJECT_DIR$/.idea/baseball_simulator.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/baseball_simulator.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,6 +23,12 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "gmelick"
+  }
+}]]></component>
   <component name="GithubPullRequestsUISettings"><![CDATA[{
   "selectedUrlAndAccountId": {
     "url": "https://github.com/gmelick/baseball_simulator",
@@ -59,10 +59,18 @@
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
     "git-widget-placeholder": "master",
     "junie.onboarding.icon.badge.shown": "true",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "settings.editor.selected.configurable": "com.intellij.pycharm.community.ide.impl.configuration.PythonContentEntriesConfigurable",
     "to.speed.mode.migration.done": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\grego\OneDrive\Documents\PycharmProjects\baseball_simulator\models" />
+      <recent name="C:\Users\grego\OneDrive\Documents\PycharmProjects\baseball_simulator\simulation" />
+      <recent name="C:\Users\grego\OneDrive\Documents\PycharmProjects\baseball_simulator\data" />
+      <recent name="C:\Users\grego\OneDrive\Documents\PycharmProjects\baseball_simulator\similarities" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -94,11 +102,20 @@
       <option name="project" value="LOCAL" />
       <updated>1775107470594</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Updated File Structure">
+      <option name="closed" value="true" />
+      <created>1775107827196</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1775107827196</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initial Upload" />
-    <option name="LAST_COMMIT_MESSAGE" value="Initial Upload" />
+    <MESSAGE value="Updated File Structure" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated File Structure" />
   </component>
 </project>
