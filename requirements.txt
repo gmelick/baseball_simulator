@@ -10,6 +10,7 @@ beautifulsoup4>=4.14.3
 
 # Pitcher Leash Model
 keras>=3.13.2
+tensorflow>=2.21.0
 
 # Calculating Pitcher Similarity
 POT>=0.9.6

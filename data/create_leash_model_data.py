@@ -26,9 +26,9 @@ def load_data(cur_date):
             hook_df = pd.read_csv(f'{cur_date.year} Pitcher Hooks.csv', parse_dates=['Date'])
             if pd.to_datetime(cur_date) in hook_df.Date.values:
                 return
-            file = open(f'{cur_date.year} Pitcher Hooks.csv', 'a+')
+            file = open(f'..\\{cur_date.year} Pitcher Hooks.csv', 'a+')
         else:
-            file = open(f'{cur_date.year} Pitcher Hooks.csv', 'w+')
+            file = open(f'..\\{cur_date.year} Pitcher Hooks.csv', 'w+')
             file.write('Date,Pitcher,Batters Faced,Outs,Hits,Runs,Strikeouts,Walks,Hit By Pitch,Home Runs,Pitches,'
                        'Strikes,Earned Runs,IsInningEnd,Starter,Pulled\n')
         for game_pk in season_df.game_pk.unique():
@@ -144,13 +144,13 @@ def refresh_data():
             season_df = pd.read_csv(f'{season}.csv', encoding='cp1252')
         else:
             continue
-        file = open(f'{season} Pitcher Hooks.csv', 'w+')
+        file = open(f'..\\{season} Pitcher Hooks.csv', 'w+')
         file.write('Date,Pitcher,Batters Faced,Outs,Hits,Runs,Strikeouts,Walks,Hit By Pitch,Home Runs,Pitches,'
                    'Strikes,Earned Runs,IsInningEnd,Starter,Pulled\n')
         file.close()
         for game_pk in season_df.game_pk.unique():
             game_date = season_df[season_df.game_pk == game_pk]['game_date'].max()
-            file = open(f'{season} Pitcher Hooks.csv', 'a+')
+            file = open(f'..\\{season} Pitcher Hooks.csv', 'a+')
             plays = None
             while True:
                 try:

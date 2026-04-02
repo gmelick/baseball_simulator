@@ -1,2 +1,9 @@
 # IDE
 .idea/
+
+# Existing Data Files
+*.csv
+*.keras
+
+# Claude
+.claude/

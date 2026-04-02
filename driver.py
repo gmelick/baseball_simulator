@@ -44,4 +44,4 @@ def _process_date(cur_date, exclude_games):
     simulate_day(cur_date, hook_model_starters, hook_model_relievers, exclude_games)
 
 if __name__ == '__main__':
-    _process_date(date(2026, 3, 26), date.today() - timedelta(1))
+    process_date_range(date(2026, 3, 26), date.today() - timedelta(1), [])

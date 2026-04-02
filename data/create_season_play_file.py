@@ -17,7 +17,7 @@ def connect(url, params=None):
     return resp
 
 def write_rows(game_pk, season, batter_hand_dict):
-    file = open(f'{season}.csv', 'a+')
+    file = open(f'..\\{season}.csv', 'a+')
     game_dict = None
     while True:
         try:
@@ -347,7 +347,7 @@ def refresh_plays():
     params = {'sportId': 1, 'gameTypes': ['R', 'F', 'D', 'L', 'W', 'C', 'P']}
     for season in range(2017, datetime.today().year):
         batter_hand_dict = {}
-        with open(f'{season}.csv', 'w+') as file:
+        with open(f'..\\{season}.csv', 'w+') as file:
             file.write('game_pk,game_date,venue_id,venue,home_id,home_team,away_id,away_team,home_manager_id,home_manager_name,away_manager_id,away_manager_name,inning,inning_topbot,at_bat_number,pitch_number,'
                        'pitcher,p_throws,batter,stand,bat_hand,home_score,away_score,bat_score,fld_score,balls,strikes,outs,'
                        'type,description,pitch_type,pitch_name,events,sz_top,sz_bot,release_speed,end_speed,'
