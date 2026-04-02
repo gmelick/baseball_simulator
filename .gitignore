@@ -1,9 +1,8 @@
-# IDE
+# Directories
+.ai/
 .idea/
+.claude/
 
-# Existing Data Files
+# Data Files
 *.csv
 *.keras
-
-# Claude
-.claude/
