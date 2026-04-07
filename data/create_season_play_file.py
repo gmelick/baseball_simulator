@@ -5,6 +5,7 @@ import pandas as pd
 import os
 
 def connect(url, params=None):
+    resp = None
     while True:
         try:
             if params is None:
@@ -17,7 +18,7 @@ def connect(url, params=None):
     return resp
 
 def write_rows(game_pk, season, batter_hand_dict):
-    file = open(f'..\\{season}.csv', 'a+')
+    file = open(f'{season}.csv', 'a+')
     game_dict = None
     while True:
         try:
@@ -205,6 +206,8 @@ def write_rows(game_pk, season, batter_hand_dict):
                 runner = play['runners'][j]
                 if i <= runner['details']['playIndex'] <= max_play_index:
                     for credit in runner.get('credits', []):
+                        if fielded_by == "":
+                            fielded_by = credit['player']['id']
                         if credit['credit'] == 'f_putout':
                             putout_dict[f'field_putout_{putout_tracker}'] = credit['player']['id']
                             putout_tracker += 1
@@ -225,15 +228,15 @@ def write_rows(game_pk, season, batter_hand_dict):
                         elif credit['credit'] not in ['f_deflection', 'c_catcher_interf', 'f_touch', 'f_interference']:
                             print(credit['credit'])
                     if runner['movement']['end'] == 'score':
-                        if runner['movement']['originBase'] == '1B':
+                        if runner["details"]["runner"]["id"] == pre_play_runner_on_first:
                             runner_on_first_score = True
                             if runner['details']['runner']['id'] == post_play_runner_on_first:
                                 post_play_runner_on_first = ''
-                        if runner['movement']['originBase'] == '2B':
+                        if runner["details"]["runner"]["id"] == pre_play_runner_on_second:
                             runner_on_second_score = True
                             if runner['details']['runner']['id'] == post_play_runner_on_second:
                                 post_play_runner_on_second = ''
-                        if runner['movement']['originBase'] == '3B':
+                        if runner["details"]["runner"]["id"] == pre_play_runner_on_third:
                             runner_on_third_score = True
                             if runner['details']['runner']['id'] == post_play_runner_on_third:
                                 post_play_runner_on_third = ''
@@ -321,20 +324,22 @@ def get_plays(start_date, end_date):
         else:
             season_df = None
             with open(f'{date["date"][:4]}.csv', 'w+') as file:
-                file.write(
-                    'game_pk,game_date,venue_id,venue,home_id,home_team,away_id,away_team,home_manager_id,home_manager_name,away_manager_id,away_manager_name,inning,inning_topbot,at_bat_number,pitch_number,'
-                    'pitcher,p_throws,batter,stand,bat_hand,home_score,away_score,bat_score,fld_score,balls,strikes,outs,'
-                    'type,description,pitch_type,pitch_name,events,sz_top,sz_bot,release_speed,end_speed,'
-                    'release_pos_x,release_pos_y,release_pos_z,vx0,vy0,vz0,ax,ay,az,pfx_x,pfx_z,plate_x,plate_z,'
-                    'x,y,release_spin_rate,spin_axis,break_angle,break_length,break_y,break_vertical,'
-                    'break_vertical_induced,break_horizontal,zone,release_extension,launch_speed,launch_angle,hit_distance_sc,'
-                    'hc_x,hc_y,spray_angle,bb_type,hit_location,des,on_1b,on_2b,on_3b,post_on_1b,post_on_2b,post_on_3b,fielder_2,fielder_3,fielder_4,fielder_5,'
-                    'fielder_6,fielder_7,fielder_8,fielder_9,runs_on_pitch,outs_on_pitch,rbis_on_pitch,'
-                    'earned_runs_on_pitch,1b_runner_score,2b_runner_score,'
-                    '3b_runner_score,sb_attempt_2b,sb_attempt_3b,sb_attempt_home,sb_success_2b,sb_success_3b,'
-                    'sb_success_home,passed_ball_wild_pitch,pinch_hitter,pinch_runner,pitcher_sub,defensive_sub,fielded_by,fielding_error,dropped_ball,of_assist,'
-                    'field_assist_1,field_assist_2,field_assist_3,field_assist_4,field_assist_5,field_putout_1,'
-                    'field_putout_2,field_putout_3,throwing_error_1,throwing_error_2\n')
+                file.write('game_pk,game_date,venue_id,venue,home_id,home_team,away_id,away_team,home_manager_id,'
+                           'home_manager_name,away_manager_id,away_manager_name,inning,inning_topbot,at_bat_number,'
+                           'pitch_number,pitcher,p_throws,batter,stand,bat_hand,home_score,away_score,bat_score,'
+                           'fld_score,balls,strikes,outs,type,description,pitch_type,pitch_name,events,sz_top,sz_bot,'
+                           'release_speed,end_speed,release_pos_x,release_pos_y,release_pos_z,vx0,vy0,vz0,ax,ay,az,'
+                           'pfx_x,pfx_z,plate_x,plate_z,x,y,release_spin_rate,spin_axis,break_angle,break_length,'
+                           'break_y,break_vertical,break_vertical_induced,break_horizontal,zone,release_extension,'
+                           'launch_speed,launch_angle,hit_distance_sc,hc_x,hc_y,spray_angle,bb_type,hit_location,des,'
+                           'on_1b,on_2b,on_3b,post_on_1b,post_on_2b,post_on_3b,fielder_2,fielder_3,fielder_4,fielder_5,'
+                           'fielder_6,fielder_7,fielder_8,fielder_9,runs_on_pitch,outs_on_pitch,rbis_on_pitch,'
+                           'earned_runs_on_pitch,1b_runner_score,2b_runner_score,3b_runner_score,sb_attempt_2b,'
+                           'sb_attempt_3b,sb_attempt_home,sb_success_2b,sb_success_3b,sb_success_home,'
+                           'passed_ball_wild_pitch,pinch_hitter,pinch_runner,pitcher_sub,defensive_sub,fielded_by,'
+                           'fielding_error,dropped_ball,of_assist,field_assist_1,field_assist_2,field_assist_3,'
+                           'field_assist_4,field_assist_5,field_putout_1,field_putout_2,field_putout_3,'
+                           'throwing_error_1,throwing_error_2\n')
         for game in date['games']:
             if 'rescheduleGameDate' in game or 'resumeGameDate' in game:
                 continue
@@ -347,20 +352,22 @@ def refresh_plays():
     params = {'sportId': 1, 'gameTypes': ['R', 'F', 'D', 'L', 'W', 'C', 'P']}
     for season in range(2017, datetime.today().year):
         batter_hand_dict = {}
-        with open(f'..\\{season}.csv', 'w+') as file:
-            file.write('game_pk,game_date,venue_id,venue,home_id,home_team,away_id,away_team,home_manager_id,home_manager_name,away_manager_id,away_manager_name,inning,inning_topbot,at_bat_number,pitch_number,'
-                       'pitcher,p_throws,batter,stand,bat_hand,home_score,away_score,bat_score,fld_score,balls,strikes,outs,'
-                       'type,description,pitch_type,pitch_name,events,sz_top,sz_bot,release_speed,end_speed,'
-                       'release_pos_x,release_pos_y,release_pos_z,vx0,vy0,vz0,ax,ay,az,pfx_x,pfx_z,plate_x,plate_z,'
-                       'x,y,release_spin_rate,spin_axis,break_angle,break_length,break_y,break_vertical,'
-                       'break_vertical_induced,break_horizontal,zone,release_extension,launch_speed,launch_angle,hit_distance_sc,'
-                       'hc_x,hc_y,spray_angle,bb_type,hit_location,des,on_1b,on_2b,on_3b,post_on_1b,post_on_2b,post_on_3b,fielder_2,fielder_3,fielder_4,fielder_5,'
-                       'fielder_6,fielder_7,fielder_8,fielder_9,runs_on_pitch,outs_on_pitch,rbis_on_pitch,'
-                       'earned_runs_on_pitch,1b_runner_score,2b_runner_score,'
-                       '3b_runner_score,sb_attempt_2b,sb_attempt_3b,sb_attempt_home,sb_success_2b,sb_success_3b,'
-                       'sb_success_home,passed_ball_wild_pitch,pinch_hitter,pinch_runner,pitcher_sub,defensive_sub,fielded_by,fielding_error,dropped_ball,of_assist,'
-                       'field_assist_1,field_assist_2,field_assist_3,field_assist_4,field_assist_5,field_putout_1,'
-                       'field_putout_2,field_putout_3,throwing_error_1,throwing_error_2\n')
+        with open(f'{season}.csv', 'w+') as file:
+            file.write('game_pk,game_date,venue_id,venue,home_id,home_team,away_id,away_team,home_manager_id,'
+                       'home_manager_name,away_manager_id,away_manager_name,inning,inning_topbot,at_bat_number,'
+                       'pitch_number,pitcher,p_throws,batter,stand,bat_hand,home_score,away_score,bat_score,fld_score,'
+                       'balls,strikes,outs,type,description,pitch_type,pitch_name,events,sz_top,sz_bot,release_speed,'
+                       'end_speed,release_pos_x,release_pos_y,release_pos_z,vx0,vy0,vz0,ax,ay,az,pfx_x,pfx_z,plate_x,'
+                       'plate_z,x,y,release_spin_rate,spin_axis,break_angle,break_length,break_y,break_vertical,'
+                       'break_vertical_induced,break_horizontal,zone,release_extension,launch_speed,launch_angle,'
+                       'hit_distance_sc,hc_x,hc_y,spray_angle,bb_type,hit_location,des,on_1b,on_2b,on_3b,post_on_1b,'
+                       'post_on_2b,post_on_3b,fielder_2,fielder_3,fielder_4,fielder_5,fielder_6,fielder_7,fielder_8,'
+                       'fielder_9,runs_on_pitch,outs_on_pitch,rbis_on_pitch,earned_runs_on_pitch,1b_runner_score,'
+                       '2b_runner_score,3b_runner_score,sb_attempt_2b,sb_attempt_3b,sb_attempt_home,sb_success_2b,'
+                       'sb_success_3b,sb_success_home,passed_ball_wild_pitch,pinch_hitter,pinch_runner,pitcher_sub,'
+                       'defensive_sub,fielded_by,fielding_error,dropped_ball,of_assist,field_assist_1,field_assist_2,'
+                       'field_assist_3,field_assist_4,field_assist_5,field_putout_1,field_putout_2,field_putout_3,'
+                       'throwing_error_1,throwing_error_2\n')
         params['season'] = season
         schedule = connect(f'{base_schedule_url}', params)['dates']
         for date in schedule:
@@ -372,4 +379,5 @@ def refresh_plays():
                 batter_hand_dict = write_rows(pk, season, batter_hand_dict)
 
 if __name__ == '__main__':
+    os.chdir('..')
     refresh_plays()

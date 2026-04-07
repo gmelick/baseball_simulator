@@ -2,7 +2,11 @@
 .ai/
 .idea/
 .claude/
+backtests/
+2026/
 
 # Data Files
 *.csv
 *.keras
+*.pkl
+*.feather

@@ -13,7 +13,7 @@ def batter_similarities(as_of_date):
     df_list = []
     for year in range(as_of_date.year - 3, as_of_date.year + 1):
         if os.path.exists(f'{year}.csv'):
-            season_df = pd.read_csv(f'{year}.csv', encoding='cp1252', parse_dates=['game_date'])
+            season_df = pd.read_csv(f'{year}.csv', encoding='cp1252', parse_dates=['game_date']).copy()
             season_df['season'] = year
             df_list.append(season_df)
     df = pd.concat(df_list)
@@ -140,4 +140,5 @@ def calc_result_similarities(df):
 
 if __name__ == '__main__':
     from datetime import datetime
+    os.chdir('..')
     batter_similarities(datetime(2025, 9, 23))

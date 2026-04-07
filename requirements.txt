@@ -9,8 +9,10 @@ requests>=2.33.1
 beautifulsoup4>=4.14.3
 
 # Pitcher Leash Model
-keras>=3.13.2
+keras>=3.14.0
 tensorflow>=2.21.0
 
 # Calculating Pitcher Similarity
 POT>=0.9.6
+
+joblib>=1.5.3

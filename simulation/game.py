@@ -45,7 +45,7 @@ def numpy_sigmoid(x):
 
 def numpy_forward(x, weights):
     """
-    x: raw input array of shape (12,) — will be reshaped to (12, 1)
+    x: raw input array of shape (12) — will be reshaped to (12, 1)
     weights: dict from extract_model_weights()
     """
     x = x.reshape(12, 1).astype(np.float32)
@@ -73,13 +73,13 @@ def numpy_forward(x, weights):
         x = numpy_dense(x, weights["dense"]["kernel"], weights["dense"]["bias"])  # (1,)
     else:
         x = numpy_dense(x, weights[f"dense_{int(start_index / 3)}"]["kernel"], weights[f"dense_{int(start_index / 3)}"]["bias"])
-    return float(numpy_sigmoid(x))
+    return float(numpy_sigmoid(x)[0])
 
 
 # ------------------ Shared memory helpers ------------------
 def dataframe_to_shared(df: pd.DataFrame):
     # Convert DataFrame to structured array (contiguous)
-    arr = np.empty(len(df), dtype=[(col, df[col].dtype) for col in df.columns])
+    arr = np.empty(len(df), dtype=[(col, df[col].to_numpy().dtype) for col in df.columns])
     for col in df.columns:
         arr[col] = df[col].to_numpy(copy=False)
 
@@ -279,7 +279,7 @@ class Game:
 
     def simulate(self, n_sims=100, processes=12, chunksize=5, hook_model_starters=None, hook_model_relievers=None):
         plays = pd.read_feather(
-            f'{self.game_date.year}\\{self.game_date.strftime("%Y_%m_%d")}\\{self.game_date.strftime("%Y_%m_%d")}_{self.game_pk}.feather'
+            f'backtests\\{self.game_date.year}\\{self.game_date.strftime("%Y_%m_%d")}\\{self.game_date.strftime("%Y_%m_%d")}_{self.game_pk}.feather'
         )
 
         starter_model_weights = extract_model_weights(hook_model_starters)
@@ -318,6 +318,11 @@ class Game:
         plays_meta, shm_block = dataframe_to_shared(plays)
 
         print(f'Started at {datetime.now()}')
+        # To Run In Single Threading for debugging
+        # _init_worker(plays_meta)
+        # run_simulation(None)
+
+        # To Run with multiple workers
         with Pool(processes=processes, initializer=_init_worker, initargs=(plays_meta,)) as pool:
             results = pool.map(run_simulation, range(n_sims), chunksize=chunksize)
         print(f'Finished at {datetime.now()}')
@@ -325,7 +330,7 @@ class Game:
         shm_block.close()
         shm_block.unlink()
 
-        output_path = f'{self.game_date.year}\\{self.game_date.strftime("%Y_%m_%d")}\\{self.game_date.strftime("%Y_%m_%d")}_{self.game_pk}.csv'
+        output_path = f'backtests\\{self.game_date.year}\\{self.game_date.strftime("%Y_%m_%d")}\\{self.game_date.strftime("%Y_%m_%d")}_{self.game_pk}.csv'
         with open(output_path, "w+") as file:
             file.write('T1,B1,T2,B2,T3,B3,T4,B4,T5,B5,T6,B6,T7,B7,T8,B8,T9,B9,T10+,B10+,Home Score,Away Score')
             for i in range(12):

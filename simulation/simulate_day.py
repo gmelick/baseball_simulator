@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from game import Game
+from simulation.game import Game
 import numpy as np
 import os
 import pandas as pd
@@ -54,7 +54,7 @@ def simulate_day(cur_date, hook_model_starters, hook_model_relievers, exclude_li
             game_key = int(game['data-gamepk'])
             if game_key not in game_pks:
                 continue
-            os.makedirs(f'{cur_date.year}\\{cur_date.strftime("%Y_%m_%d")}', exist_ok=True)
+            os.makedirs(f'backtests\\{cur_date.year}\\{cur_date.strftime("%Y_%m_%d")}', exist_ok=True)
             print('Getting Lineups')
             away_team = game.find('span', {'class': away_team_class}).find('a', {'class': team_name_class}).text.strip()
             home_team = game.find('span', {'class': home_team_class}).find('a', {'class': team_name_class}).text.strip()
@@ -94,11 +94,11 @@ def simulate_day(cur_date, hook_model_starters, hook_model_relievers, exclude_li
                          home_pitcher_id, away_lineup_ids, home_lineup_ids, away_bullpen_appearances,
                          home_bullpen_appearances, pitcher_hand_map, hook_model_starters, hook_model_relievers)
             game_pks.remove(game_key)
-            os.remove(f'{cur_date.year}\\{cur_date.strftime("%Y_%m_%d")}\\{cur_date.strftime("%Y_%m_%d")}_{game_key}.feather')
+            os.remove(f'backtests\\{cur_date.year}\\{cur_date.strftime("%Y_%m_%d")}\\{cur_date.strftime("%Y_%m_%d")}_{game_key}.feather')
 
 def simulate_game(cur_date, game_key, home_team, away_team, home_pitcher_id, away_pitcher_id, home_bullpen, away_bullpen, home_lineup_ids, away_lineup_ids, hook_model_starters, hook_model_relievers):
     plays, pitcher_similarities, rhb_hp_similarities, lhb_hp_similarities, bullpen_df = create_frames(cur_date)
-    os.makedirs(f'{cur_date.year}\\{cur_date.strftime("%Y_%m_%d")}', exist_ok=True)
+    os.makedirs(f'backtests\\{cur_date.year}\\{cur_date.strftime("%Y_%m_%d")}', exist_ok=True)
     pitcher_list = [home_pitcher_id, away_pitcher_id] + home_bullpen + away_bullpen
     batter_list = home_lineup_ids + away_lineup_ids
     pitcher_hand_map, home_bullpen_appearances, away_bullpen_appearances = setup_game(cur_date, game_key, pitcher_list,
@@ -111,7 +111,7 @@ def simulate_game(cur_date, game_key, home_team, away_team, home_pitcher_id, awa
     process_game(cur_date, home_team, away_team, game_key, home_bullpen, away_bullpen, away_pitcher_id,
                  home_pitcher_id, away_lineup_ids, home_lineup_ids, away_bullpen_appearances,
                  home_bullpen_appearances, pitcher_hand_map, hook_model_starters, hook_model_relievers)
-    os.remove(f'{cur_date.year}\\{cur_date.strftime("%Y_%m_%d")}\\{cur_date.strftime("%Y_%m_%d")}_{game_key}.feather')
+    os.remove(f'backtests\\{cur_date.year}\\{cur_date.strftime("%Y_%m_%d")}\\{cur_date.strftime("%Y_%m_%d")}_{game_key}.feather')
     return 0
 
 def setup_game(cur_date, game_key, pitcher_list, batter_list, home_bullpen, away_bullpen, plays, pitcher_similarities, rhb_hp_similarities, lhb_hp_similarities, bullpen_df):
@@ -119,7 +119,7 @@ def setup_game(cur_date, game_key, pitcher_list, batter_list, home_bullpen, away
     batter_hand_map = fetch_batter_hands(set(batter_list))
     similarities = [pitcher_similarities, rhb_hp_similarities, lhb_hp_similarities]
     game_plays = combine_plays_similarities(plays.copy(), pitcher_list, batter_list, batter_hand_map, similarities)
-    game_plays.to_feather(f'{cur_date.year}\\{cur_date.strftime("%Y_%m_%d")}\\{cur_date.strftime("%Y_%m_%d")}_{game_key}.feather')
+    game_plays.to_feather(f'backtests\\{cur_date.year}\\{cur_date.strftime("%Y_%m_%d")}\\{cur_date.strftime("%Y_%m_%d")}_{game_key}.feather')
     away_bullpen_appearances = bullpen_df[np.isin(bullpen_df.pitcher, away_bullpen)]
     home_bullpen_appearances = bullpen_df[np.isin(bullpen_df.pitcher, home_bullpen)]
     return pitcher_hand_map, home_bullpen_appearances, away_bullpen_appearances
@@ -130,7 +130,7 @@ def create_frames(cur_date):
     for year in range(cur_date.year - 3, cur_date.year + 1):
         if not os.path.exists(f"{year}.csv"):
             continue
-        df = pd.read_csv(f"{year}.csv", encoding="cp1252", parse_dates=["game_date"], low_memory=False)
+        df = pd.read_csv(f"{year}.csv", encoding="cp1252", parse_dates=["game_date"], low_memory=False).copy()
         df['Season'] = year
         frames.append(df[df["game_date"] < pd.to_datetime(cur_date)])
     plays = pd.concat(frames, ignore_index=True)
@@ -297,4 +297,5 @@ def process_game(cur_date, home_team, away_team, game_key, home_bullpen, away_bu
 
 if __name__ == '__main__':
     from keras.models import load_model
+    os.chdir('..')
     simulate_day(date(2026, 3, 25), load_model('best_model_0.keras'), load_model('best_model_1.keras'), [])
